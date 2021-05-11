@@ -42,6 +42,7 @@ When you're done configuring DNS, proceed to [Configuring the playbook](configur
 | [Hydrogen](configuring-playbook-client-hydrogen.md) web client                                                          | CNAME | `hydrogen`                     | -        | -      | -    | `matrix.<your-domain>`      |
 | [Cinny](configuring-playbook-client-cinny.md) web client                                                                | CNAME | `cinny`                        | -        | -      | -    | `matrix.<your-domain>`      |
 | [Buscarron](configuring-playbook-bot-buscarron.md) helpdesk bot                                                         | CNAME | `buscarron`                    | -        | -      | -    | `matrix.<your-domain>`      |
+| [Wsproxy](configuring-playbook-wsproxy.md) websocket proxy                                                              | CNAME | `wsproxy`                      | -        | -      | -    | `matrix.<your-domain>`      |
 | [Postmoogle](configuring-playbook-bot-postmoogle.md)/[Email2Matrix](configuring-playbook-email2matrix.md) email bridges | MX    | `matrix`                       | 10       | 0      | -    | `matrix.<your-domain>`      |
 | [Postmoogle](configuring-playbook-bot-postmoogle.md) email bridge                                                       | TXT   | `matrix`                       | -        | -      | -    | `v=spf1 ip4:<your-ip> -all` |
 | [Postmoogle](configuring-playbook-bot-postmoogle.md) email bridge                                                       | TXT   | `_dmarc.matrix`                | -        | -      | -    | `v=DMARC1; p=quarantine;`   |
@@ -73,6 +74,8 @@ The `hydrogen.<your-domain>` subdomain may be necessary, because this playbook c
 The `cinny.<your-domain>` subdomain may be necessary, because this playbook could install the [Cinny](https://github.com/ajbura/cinny) web client. The installation of cinny is disabled by default, it is not a core required component. To learn how to install it, see our [configuring cinny guide](configuring-playbook-client-cinny.md). If you do not wish to set up cinny, feel free to skip the `cinny.<your-domain>` DNS record.
 
 The `buscarron.<your-domain>` subdomain may be necessary, because this playbook could install the [buscarron](https://gitlab.com/etke.cc/buscarron) bot. The installation of buscarron is disabled by default, it is not a core required component. To learn how to install it, see our [configuring buscarron guide](configuring-playbook-bot-buscarron.md). If you do not wish to set up buscarron, feel free to skip the `buscarron.<your-domain>` DNS record.
+
+The `wsproxy.<your-domain>` subdomain may be necessary, because this playbook could install the [wsproxy](https://github.com/mautrix/wsproxy) web client. The installation of wsproxy is disabled by default, it is not a core required component. To learn how to install it, see our [configuring wsproxy guide](configuring-playbook-bridge-mautrix-wsproxy.md). If you do not wish to set up wsproxy, feel free to skip the `wsproxy.<your-domain>` DNS record.
 
 ## `_matrix-identity._tcp` SRV record setup
 
