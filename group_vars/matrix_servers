@@ -85,6 +85,8 @@ matrix_homeserver_container_extra_arguments_auto: |
     +
     (['--mount type=bind,src=' + matrix_mautrix_discord_config_path + '/registration.yaml,dst=/matrix-mautrix-discord-registration.yaml,ro'] if matrix_mautrix_discord_enabled else [])
     +
+    (['--mount type=bind,src=' + matrix_mautrix_wsproxy_config_path + '/registration.yaml,dst=/matrix-mautrix-wsproxy-registration.yaml,ro'] if matrix_mautrix_wsproxy_enabled else [])
+    +
     (['--mount type=bind,src=' + matrix_mautrix_slack_config_path + '/registration.yaml,dst=/matrix-mautrix-slack-registration.yaml,ro'] if matrix_mautrix_slack_enabled else [])
     +
     (['--mount type=bind,src=' + matrix_mautrix_facebook_config_path + '/registration.yaml,dst=/matrix-mautrix-facebook-registration.yaml,ro'] if matrix_mautrix_facebook_enabled else [])
@@ -141,6 +143,8 @@ matrix_homeserver_app_service_config_files_auto: |
     (['/hookshot-registration.yml'] if matrix_hookshot_enabled else [])
     +
     (['/matrix-mautrix-discord-registration.yaml'] if matrix_mautrix_discord_enabled else [])
+    +
+    (['/matrix-mautrix-wsproxy-registration.yaml'] if matrix_mautrix_wsproxy_enabled else [])
     +
     (['/matrix-mautrix-slack-registration.yaml'] if matrix_mautrix_slack_enabled else [])
     +
@@ -251,6 +255,8 @@ devture_systemd_service_manager_services_list_auto: |
     ([{'name': 'matrix-hookshot.service', 'priority': 2000, 'groups': ['matrix', 'bridges', 'hookshot']}] if matrix_hookshot_enabled else [])
     +
     ([{'name': 'matrix-mautrix-discord.service', 'priority': 2000, 'groups': ['matrix', 'bridges', 'mautrix-discord']}] if matrix_mautrix_discord_enabled else [])
+    +
+    ([{'name': 'matrix-mautrix-wsproxy.service', 'priority': 2000, 'groups': ['matrix', 'bridges', 'mautrix-wsproxy']}] if matrix_mautrix_wsproxy_enabled else [])
     +
     ([{'name': 'matrix-mautrix-slack.service', 'priority': 2000, 'groups': ['matrix', 'bridges', 'mautrix-slack']}] if matrix_mautrix_slack_enabled else [])
     +
@@ -1195,6 +1201,42 @@ matrix_mautrix_whatsapp_database_password: "{{ '%s' | format(matrix_homeserver_g
 ######################################################################
 #
 # /matrix-bridge-mautrix-whatsapp
+#
+######################################################################
+
+######################################################################
+#
+# matrix-bridge-mautrix-wsproxy
+#
+######################################################################
+
+# We don't enable bridges by default.
+matrix_mautrix_wsproxy_enabled: false
+
+matrix_mautrix_wsproxy_systemd_required_services_list: |
+  {{
+    ['docker.service']
+    +
+    (['matrix-synapse.service'] if matrix_synapse_enabled else [])
+    +
+    (['matrix-postgres.service'] if devture_postgres_enabled else [])
+  }}
+
+matrix_mautrix_wsproxy_homeserver_domain: '{{ matrix_domain }}'
+
+matrix_mautrix_wsproxy_homeserver_address: "{{ 'http://matrix-synapse:8008' if matrix_synapse_enabled else '' }}"
+
+matrix_mautrix_wsproxy_homeserver_token: "{{ matrix_homeserver_generic_secret_key | password_hash('sha512', 'wsproxy.hs.token') | to_uuid }}"
+
+matrix_mautrix_wsproxy_appservice_token: "{{ matrix_homeserver_generic_secret_key | password_hash('sha512', 'wsproxy.as.token') | to_uuid }}"
+
+matrix_mautrix_wsproxy_login_shared_secret: "{{ matrix_synapse_ext_password_provider_shared_secret_auth_shared_secret if matrix_synapse_ext_password_provider_shared_secret_auth_enabled else '' }}"
+
+# Postgres is the default, except if not using `matrix_postgres` (internal postgres)
+
+######################################################################
+#
+# /matrix-bridge-mautrix-wsproxy
 #
 ######################################################################
 
@@ -2622,6 +2664,7 @@ matrix_nginx_proxy_proxy_jitsi_enabled: "{{ jitsi_enabled and matrix_playbook_re
 matrix_nginx_proxy_proxy_grafana_enabled: "{{ grafana_enabled and matrix_playbook_reverse_proxy_type in ['playbook-managed-nginx', 'other-nginx-non-container'] }}"
 matrix_nginx_proxy_proxy_sygnal_enabled: "{{ matrix_sygnal_enabled and matrix_playbook_reverse_proxy_type in ['playbook-managed-nginx', 'other-nginx-non-container'] }}"
 matrix_nginx_proxy_proxy_ntfy_enabled: "{{ ntfy_enabled and matrix_playbook_reverse_proxy_type in ['playbook-managed-nginx', 'other-nginx-non-container'] }}"
+matrix_nginx_proxy_proxy_mautrix_wsproxy_enabled: "{{ matrix_mautrix_wsproxy_enabled and matrix_playbook_reverse_proxy_type in ['playbook-managed-nginx', 'other-nginx-non-container'] }}"
 
 matrix_nginx_proxy_container_labels_traefik_enabled: "{{ matrix_playbook_traefik_labels_enabled }}"
 matrix_nginx_proxy_container_labels_traefik_docker_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"
@@ -2754,6 +2797,8 @@ matrix_ssl_domains_to_obtain_certificates_for: |
     ([matrix_server_fqn_rageshake] if matrix_rageshake_enabled else [])
     +
     (matrix_bot_postmoogle_domains if matrix_bot_postmoogle_enabled else [])
+    +
+    ([matrix_server_fqn_mautrix_wsproxy] if matrix_mautrix_wsproxy_enabled else [])
     +
     ([matrix_domain] if matrix_nginx_proxy_base_domain_serving_enabled else [])
     +
