@@ -22,8 +22,9 @@
 	location / {
 		{% if matrix_nginx_proxy_enabled %}
 			{# Use the embedded DNS resolver in Docker containers to discover the service #}
-			resolver 127.0.0.11 valid=5s;
-			set $backend "wsproxy:{{ matrix_mautrix_wsproxy_port }}";
+			resolver {{ matrix_nginx_proxy_http_level_resolver }} valid=5s;
+			set $backend "matrix-mautrix-wsproxy:{{ matrix_mautrix_wsproxy_port }}";
+			set $backend "matrix-client-element:8080";
 			proxy_pass http://$backend;
 		{% else %}
 			{# Generic configuration for use outside of our container setup #}
@@ -55,7 +56,7 @@ server {
 		location /.well-known/acme-challenge {
 			{% if matrix_nginx_proxy_enabled %}
 				{# Use the embedded DNS resolver in Docker containers to discover the service #}
-				resolver 127.0.0.11 valid=5s;
+				resolver {{ matrix_nginx_proxy_http_level_resolver }} valid=5s;
 				set $backend "matrix-certbot:8080";
 				proxy_pass http://$backend;
 			{% else %}
@@ -86,7 +87,7 @@ server {
 	ssl_certificate_key {{ matrix_ssl_config_dir_path }}/live/{{ matrix_nginx_proxy_proxy_mautrix_wsproxy_hostname }}/privkey.pem;
 
 	ssl_protocols {{ matrix_nginx_proxy_ssl_protocols }};
-	{% if matrix_nginx_proxy_ssl_ciphers != '' %}
+	{% if matrix_nginx_proxy_ssl_ciphers != "" %}
 	ssl_ciphers {{ matrix_nginx_proxy_ssl_ciphers }};
 	{% endif %}
 	ssl_prefer_server_ciphers {{ matrix_nginx_proxy_ssl_prefer_server_ciphers }};
