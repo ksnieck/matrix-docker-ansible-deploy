@@ -43,6 +43,14 @@
     owner: "{{ matrix_user_username }}"
     group: "{{ matrix_user_groupname }}"
 
+- name: Ensure wsproxy labels installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/labels.j2"
+    dest: "{{ matrix_mautrix_wsproxy_base_path }}/labels"
+    mode: 0640
+    owner: "{{ matrix_user_username }}"
+    group: "{{ matrix_user_groupname }}"
+
 - name: Ensure mautrix-wsproxy registration.yaml installed
   copy:
     content: "{{ matrix_mautrix_wsproxy_registration|to_nice_yaml }}"

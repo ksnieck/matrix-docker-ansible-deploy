@@ -309,10 +309,6 @@ matrix_nginx_proxy_proxy_matrix_metrics_additional_location_configuration_blocks
 matrix_nginx_proxy_proxy_matrix_metrics_additional_system_location_configuration_blocks: []
 matrix_nginx_proxy_proxy_matrix_metrics_additional_user_location_configuration_blocks: []
 
-# Controls whether proxying the mautrix wsproxy should be done.
-matrix_nginx_proxy_proxy_mautrix_wsproxy_enabled: false
-matrix_nginx_proxy_proxy_mautrix_wsproxy_hostname: "{{ matrix_server_fqn_mautrix_wsproxy }}"
-
 # Controls whether proxying for the matrix-corporal API (`/_matrix/corporal`) should be done (on the matrix domain)
 matrix_nginx_proxy_proxy_matrix_corporal_api_enabled: false
 matrix_nginx_proxy_proxy_matrix_corporal_api_addr_with_container: "matrix-corporal:41081"
@@ -442,9 +438,6 @@ matrix_nginx_proxy_proxy_sygnal_additional_server_configuration_blocks: []
 
 # A list of strings containing additional configuration blocks to add to ntfy's server configuration (matrix-ntfy.conf).
 matrix_nginx_proxy_proxy_ntfy_additional_server_configuration_blocks: []
-
-# A list of strings containing additional configuration blocks to add to mautrix wsproxy server configuration (matrix-mautrix-wsproxy.conf).
-matrix_nginx_proxy_proxy_mautrix_wsproxy_additional_server_configuration_blocks: []
 
 # A list of strings containing additional configuration blocks to add to the base domain server configuration (matrix-base-domain.conf).
 matrix_nginx_proxy_proxy_domain_additional_server_configuration_blocks: []

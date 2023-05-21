@@ -1232,7 +1232,16 @@ matrix_mautrix_wsproxy_appservice_token: "{{ matrix_homeserver_generic_secret_ke
 
 matrix_mautrix_wsproxy_login_shared_secret: "{{ matrix_synapse_ext_password_provider_shared_secret_auth_shared_secret if matrix_synapse_ext_password_provider_shared_secret_auth_enabled else '' }}"
 
-# Postgres is the default, except if not using `matrix_postgres` (internal postgres)
+matrix_mautrix_wsproxy_container_network: "matrix-wsproxy"
+matrix_mautrix_wsproxy_container_additional_networks: "{{ [matrix_playbook_reverse_proxyable_services_additional_network] if matrix_playbook_reverse_proxyable_services_additional_network else [] }}"
+
+matrix_mautrix_wsproxy_container_http_host_bind_port: "{{ (matrix_playbook_service_host_bind_interface_prefix ~ '9110') if matrix_playbook_service_host_bind_interface_prefix else '' }}"
+
+matrix_mautrix_wsproxy_container_labels_traefik_enabled: "{{ matrix_playbook_traefik_labels_enabled }}"
+matrix_mautrix_wsproxy_container_labels_traefik_docker_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"
+matrix_mautrix_wsproxy_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
+matrix_mautrix_wsproxy_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+
 
 ######################################################################
 #
@@ -2664,7 +2673,6 @@ matrix_nginx_proxy_proxy_jitsi_enabled: "{{ jitsi_enabled and matrix_playbook_re
 matrix_nginx_proxy_proxy_grafana_enabled: "{{ grafana_enabled and matrix_playbook_reverse_proxy_type in ['playbook-managed-nginx', 'other-nginx-non-container'] }}"
 matrix_nginx_proxy_proxy_sygnal_enabled: "{{ matrix_sygnal_enabled and matrix_playbook_reverse_proxy_type in ['playbook-managed-nginx', 'other-nginx-non-container'] }}"
 matrix_nginx_proxy_proxy_ntfy_enabled: "{{ ntfy_enabled and matrix_playbook_reverse_proxy_type in ['playbook-managed-nginx', 'other-nginx-non-container'] }}"
-matrix_nginx_proxy_proxy_mautrix_wsproxy_enabled: "{{ matrix_mautrix_wsproxy_enabled and matrix_playbook_reverse_proxy_type in ['playbook-managed-traefik', 'playbook-managed-nginx', 'other-nginx-non-container'] }}"
 
 matrix_nginx_proxy_container_labels_traefik_enabled: "{{ matrix_playbook_traefik_labels_enabled }}"
 matrix_nginx_proxy_container_labels_traefik_docker_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"
