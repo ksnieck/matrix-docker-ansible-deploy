@@ -8,20 +8,16 @@ traefik.docker.network={{ matrix_mautrix_wsproxy_container_labels_traefik_docker
 
 {% if matrix_mautrix_wsproxy_container_labels_traefik_enabled %}
 # domain
-traefik.http.routers.matrix-mautrix-wsproxy.rule={{ matrix_mautrix_wsproxy_container_labels_traefik_proxy_rule }}
-traefik.http.routers.matrix-mautrix-wsproxy.service=matrix-mautrix-wsproxy-web
-traefik.http.routers.matrix-mautrix-wsproxy.tls={{ matrix_mautrix_wsproxy_container_labels_traefik_proxy_tls | to_json }}
-{% if matrix_mautrix_wsproxy_container_labels_traefik_proxy_tls %}
+traefik.http.routers.matrix-mautrix-wsproxy.rule={{ matrix_mautrix_wsproxy_container_labels_traefik_rule }}
+traefik.http.routers.matrix-mautrix-wsproxy.service=matrix-mautrix-wsproxy
+traefik.http.routers.matrix-mautrix-wsproxy.tls={{ matrix_mautrix_wsproxy_container_labels_traefik_tls | to_json }}
+{% if matrix_mautrix_wsproxy_container_labels_traefik_tls %}
 traefik.http.routers.matrix-mautrix-wsproxy.tls.certResolver={{ matrix_mautrix_wsproxy_container_labels_traefik_tls_certResolver }}
 {% endif %}
 traefik.http.routers.matrix-mautrix-wsproxy.entrypoints={{ matrix_mautrix_wsproxy_container_labels_traefik_entrypoints }}
 {% endif %}
 
-traefik.http.services.matrix-nginx-proxy-web.loadbalancer.server.port=8080
-
-{% if matrix_nginx_proxy_proxy_matrix_federation_api_enabled %}
-traefik.http.services.matrix-nginx-proxy-federation.loadbalancer.server.port={{ matrix_nginx_proxy_proxy_matrix_federation_port }}
-{% endif %}
+traefik.http.services.matrix-mautrix-wsproxy.loadbalancer.server.port={{ matrix_mautrix_wsproxy_port }}
 
 {% endif %}
 

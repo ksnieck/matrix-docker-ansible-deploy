@@ -1232,10 +1232,11 @@ matrix_mautrix_wsproxy_appservice_token: "{{ matrix_homeserver_generic_secret_ke
 
 matrix_mautrix_wsproxy_login_shared_secret: "{{ matrix_synapse_ext_password_provider_shared_secret_auth_shared_secret if matrix_synapse_ext_password_provider_shared_secret_auth_enabled else '' }}"
 
-matrix_mautrix_wsproxy_container_network: "matrix-wsproxy"
+matrix_mautrix_wsproxy_container_network: "{{ matrix_docker_network if matrix_playbook_reverse_proxy_type == 'playbook-managed-nginx' else 'matrix-mautrix-wsproxy' }}"
+
 matrix_mautrix_wsproxy_container_additional_networks: "{{ [matrix_playbook_reverse_proxyable_services_additional_network] if matrix_playbook_reverse_proxyable_services_additional_network else [] }}"
 
-matrix_mautrix_wsproxy_container_http_host_bind_port: "{{ (matrix_playbook_service_host_bind_interface_prefix ~ '9110') if matrix_playbook_service_host_bind_interface_prefix else '' }}"
+matrix_mautrix_wsproxy_container_http_host_bind_port: "{{ (matrix_playbook_service_host_bind_interface_prefix ~ '29331') if matrix_playbook_service_host_bind_interface_prefix else '' }}"
 
 matrix_mautrix_wsproxy_container_labels_traefik_enabled: "{{ matrix_playbook_traefik_labels_enabled }}"
 matrix_mautrix_wsproxy_container_labels_traefik_docker_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"

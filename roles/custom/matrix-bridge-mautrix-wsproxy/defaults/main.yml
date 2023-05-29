@@ -3,6 +3,15 @@
 
 matrix_mautrix_wsproxy_enabled: true
 
+matrix_mautrix_wsproxy_scheme: https
+
+# The hostname at which wsproxy is served.
+matrix_mautrix_wsproxy_hostname: "wsproxy.{{ matrix_domain }}"
+
+# The path at which wsproxy is exposed.
+# This value must either be `/` or not end with a slash (e.g. `/wsproxy`).
+matrix_mautrix_wsproxy_path_prefix: /
+
 matrix_mautrix_wsproxy_version: latest
 # See: https://mau.dev/mautrix/wsproxy/container_registry
 matrix_mautrix_wsproxy_docker_image: "dock.mau.dev/mautrix/wsproxy:{{ matrix_mautrix_wsproxy_version }}"
@@ -17,6 +26,44 @@ matrix_mautrix_wsproxy_homeserver_domain: "{{ matrix_domain }}"
 
 matrix_mautrix_wsproxy_port: 29331
 matrix_mautrix_wsproxy_appservice_address: "http://matrix-mautrix-wsproxy:{{ matrix_mautrix_wsproxy_port }}"
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+matrix_mautrix_wsproxy_container_network: matrix-mautrix-wsproxy
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to another reverse proxy, which runs in a different container network.
+matrix_mautrix_wsproxy_container_additional_networks: []
+
+# matrix_mautrix_wsproxy_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `matrix_mautrix_wsproxy_container_labels_additional_labels`.
+matrix_mautrix_wsproxy_container_labels_traefik_enabled: true
+matrix_mautrix_wsproxy_container_labels_traefik_docker_network: "{{ matrix_mautrix_wsproxy_container_network }}"
+matrix_mautrix_wsproxy_container_labels_traefik_hostname: "{{ matrix_mautrix_wsproxy_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/mautrix_wsproxy`).
+matrix_mautrix_wsproxy_container_labels_traefik_path_prefix: "{{ matrix_mautrix_wsproxy_path_prefix }}"
+matrix_mautrix_wsproxy_container_labels_traefik_rule: "Host(`{{ matrix_mautrix_wsproxy_container_labels_traefik_hostname }}`){% if matrix_mautrix_wsproxy_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ matrix_mautrix_wsproxy_container_labels_traefik_path_prefix }}`){% endif %}"
+matrix_mautrix_wsproxy_container_labels_traefik_priority: 0
+matrix_mautrix_wsproxy_container_labels_traefik_entrypoints: web-secure
+matrix_mautrix_wsproxy_container_labels_traefik_tls: "{{ matrix_mautrix_wsproxy_container_labels_traefik_entrypoints != 'web' }}"
+matrix_mautrix_wsproxy_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own headers, use `matrix_mautrix_wsproxy_container_labels_traefik_additional_response_headers_custom`
+matrix_mautrix_wsproxy_container_labels_traefik_additional_response_headers: "{{ matrix_mautrix_wsproxy_container_labels_traefik_additional_response_headers_auto | combine(matrix_mautrix_wsproxy_container_labels_traefik_additional_response_headers_custom) }}"
+matrix_mautrix_wsproxy_container_labels_traefik_additional_response_headers_auto: {}
+matrix_mautrix_wsproxy_container_labels_traefik_additional_response_headers_custom: {}
+
+# matrix_mautrix_wsproxy_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# matrix_mautrix_wsproxy_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+matrix_mautrix_wsproxy_container_labels_additional_labels: ''
 
 # A list of extra arguments to pass to the container
 matrix_mautrix_wsproxy_container_extra_arguments: []
