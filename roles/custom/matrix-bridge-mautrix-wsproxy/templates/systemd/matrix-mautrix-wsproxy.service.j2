@@ -25,7 +25,6 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create --rm -
 			--cap-drop=ALL \
 			--network={{ matrix_mautrix_wsproxy_container_network }} \
 			-v {{ matrix_mautrix_wsproxy_config_path }}:/data:z \
-			-p 127.0.0.1:29331:29331
 			--label-file={{ matrix_mautrix_wsproxy_base_path }}/labels \
 			{% for arg in matrix_mautrix_wsproxy_container_extra_arguments %}
 			{{ arg }} \
